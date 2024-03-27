@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 26
-  productGUID: fa599772441236e4aba8136c9bcf96bc
+  productGUID: 706dbe9a48a7f3e4290d121cf80202b4
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: DefaultCompany
-  productName: CCG
+  productName: CCGU
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -676,14 +676,14 @@ PlayerSettings:
   apiCompatibilityLevelPerPlatform: {}
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: CCG
+  metroPackageName: CCGU
   metroPackageVersion: 
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
-  metroApplicationDescription: CCG
+  metroApplicationDescription: CCGU
   wsaImages: {}
   metroTileShortName: 
   metroTileShowName: 0
@@ -752,10 +752,10 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
-  cloudProjectId: d423fb46-7f3e-4c8d-b022-42812eec005f
+  cloudProjectId: ca0c3fa1-6708-4e58-a26b-f03643375bbc
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: CCG
+  projectName: CCGU
   organizationId: justuforjazz
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
