@@ -26,12 +26,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4314715789331123784}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 708.41266, y: 348.56995, z: -235.20146}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &-7558051682354344712
 MonoBehaviour:
@@ -49,6 +50,14 @@ MonoBehaviour:
   syncInterval: 0.1
   Card1: {fileID: 6698809748210893588, guid: c61ebb3b1a3c0674ab15fcc3d49ae24b, type: 3}
   Card2: {fileID: 7251653076908780525, guid: a0e59473d25101a4292da67138db22d0, type: 3}
+  Card3: {fileID: 6698809748210893588, guid: 17a11b1f7fa70e54b861578b1f12776b, type: 3}
+  Card4: {fileID: 6698809748210893588, guid: bf3d7ec8fedb4f347ba4e2bf743737d6, type: 3}
+  Card5: {fileID: 6698809748210893588, guid: eb92ed653dbd4244eb15cb7bb212f736, type: 3}
+  Card6: {fileID: 6698809748210893588, guid: 41348afd9f1e21f479b1a03ffb3ccb48, type: 3}
+  Card7: {fileID: 6698809748210893588, guid: a6b356d56dfebdc4f9b839266abdc7df, type: 3}
+  Card8: {fileID: 6698809748210893588, guid: e45256490dcd1514e83ad56458b9f977, type: 3}
+  Card9: {fileID: 6698809748210893588, guid: b393e62d9adc78d4faaa549ab8997c75, type: 3}
+  Card10: {fileID: 6698809748210893588, guid: 93369b4da6b3dc24d96a8335b060675b, type: 3}
   PlayerArea: {fileID: 0}
   EnemyArea: {fileID: 0}
   DropZone: {fileID: 0}
@@ -66,7 +75,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneId: 0
   serverOnly: 0
-  m_AssetId: 
+  visible: 0
+  m_AssetId: 8d4944eff2868f64cbd26a0a4d70579e
+  hasSpawned: 0
 --- !u!114 &4037169899724174201
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,7 +93,17 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   clientAuthority: 1
-  localPositionSensitivity: 0.01
-  localRotationSensitivity: 0.01
-  localScaleSensitivity: 0.01
-  compressRotation: 1
+  sendInterval: 0.05
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  bufferTimeMultiplier: 3
+  bufferSizeLimit: 64
+  catchupThreshold: 6
+  catchupMultiplier: 0.1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
