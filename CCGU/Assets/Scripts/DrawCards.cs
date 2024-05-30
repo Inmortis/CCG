@@ -12,5 +12,9 @@ public class DrawCards : NetworkBehaviour
         PlayerManager = networkIdentity.GetComponent<PlayerManager>();
         PlayerManager.CmdDealCards();
     }
-
+void Start()
+{
+    // Получаем ссылку на компонент PlayerManager
+    PlayerManager = GetComponent<PlayerManager>();
+}
 }

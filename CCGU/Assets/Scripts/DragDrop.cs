@@ -18,7 +18,7 @@ public class DragDrop : NetworkBehaviour
     private void Start()
     {
         Canvas = GameObject.Find("Main Canvas");
-        
+
         if (!hasAuthority)
         {
             isDraggable = false;
@@ -30,7 +30,7 @@ public class DragDrop : NetworkBehaviour
         {
             transform.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
             transform.SetParent(Canvas.transform, true);
-        }        
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

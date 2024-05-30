@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7882910415619349234}
-  - component: {fileID: -7558051682354344712}
   - component: {fileID: 2234412407701241268}
   - component: {fileID: 4037169899724174201}
+  - component: {fileID: -860964772068886430}
   m_Layer: 0
   m_Name: PlayerManager
   m_TagString: Untagged
@@ -34,33 +34,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-7558051682354344712
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4314715789331123784}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f6f2e46e7f3f8147be5e69ba5ade71f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  Card1: {fileID: 6698809748210893588, guid: c61ebb3b1a3c0674ab15fcc3d49ae24b, type: 3}
-  Card2: {fileID: 7251653076908780525, guid: a0e59473d25101a4292da67138db22d0, type: 3}
-  Card3: {fileID: 6698809748210893588, guid: 17a11b1f7fa70e54b861578b1f12776b, type: 3}
-  Card4: {fileID: 6698809748210893588, guid: bf3d7ec8fedb4f347ba4e2bf743737d6, type: 3}
-  Card5: {fileID: 6698809748210893588, guid: eb92ed653dbd4244eb15cb7bb212f736, type: 3}
-  Card6: {fileID: 6698809748210893588, guid: 41348afd9f1e21f479b1a03ffb3ccb48, type: 3}
-  Card7: {fileID: 6698809748210893588, guid: a6b356d56dfebdc4f9b839266abdc7df, type: 3}
-  Card8: {fileID: 6698809748210893588, guid: e45256490dcd1514e83ad56458b9f977, type: 3}
-  Card9: {fileID: 6698809748210893588, guid: b393e62d9adc78d4faaa549ab8997c75, type: 3}
-  Card10: {fileID: 6698809748210893588, guid: 93369b4da6b3dc24d96a8335b060675b, type: 3}
-  PlayerArea: {fileID: 0}
-  EnemyArea: {fileID: 0}
-  DropZone: {fileID: 0}
 --- !u!114 &2234412407701241268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107,3 +80,30 @@ MonoBehaviour:
   showGizmos: 0
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+--- !u!114 &-860964772068886430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4314715789331123784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f6f2e46e7f3f8147be5e69ba5ade71f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  Card1Prefab: {fileID: 6698809748210893588, guid: c61ebb3b1a3c0674ab15fcc3d49ae24b, type: 3}
+  Card2Prefab: {fileID: 7251653076908780525, guid: a0e59473d25101a4292da67138db22d0, type: 3}
+  Card3Prefab: {fileID: 6698809748210893588, guid: 17a11b1f7fa70e54b861578b1f12776b, type: 3}
+  Card4Prefab: {fileID: 6698809748210893588, guid: bf3d7ec8fedb4f347ba4e2bf743737d6, type: 3}
+  Card5Prefab: {fileID: 6698809748210893588, guid: eb92ed653dbd4244eb15cb7bb212f736, type: 3}
+  Card6Prefab: {fileID: 6698809748210893588, guid: 41348afd9f1e21f479b1a03ffb3ccb48, type: 3}
+  Card7Prefab: {fileID: 6698809748210893588, guid: a6b356d56dfebdc4f9b839266abdc7df, type: 3}
+  Card8Prefab: {fileID: 6698809748210893588, guid: e45256490dcd1514e83ad56458b9f977, type: 3}
+  Card9Prefab: {fileID: 6698809748210893588, guid: b393e62d9adc78d4faaa549ab8997c75, type: 3}
+  Card10Prefab: {fileID: 6698809748210893588, guid: 93369b4da6b3dc24d96a8335b060675b, type: 3}
+  PlayerArea: {fileID: 0}
+  EnemyArea: {fileID: 0}
+  DropZone: {fileID: 0}
