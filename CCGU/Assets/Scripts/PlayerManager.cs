@@ -18,8 +18,10 @@ public class PlayerManager : NetworkBehaviour
     public GameObject PlayerArea;
     public GameObject EnemyArea;
     public GameObject DropZone;
+    public GameObject EnemyDropZone;
 
     private GameManager gameManager;
+    private PlayerHealthManager healthManager;
 
     public override void OnStartClient()
     {
@@ -27,14 +29,17 @@ public class PlayerManager : NetworkBehaviour
         PlayerArea = GameObject.Find("PlayerArea");
         EnemyArea = GameObject.Find("EnemyArea");
         DropZone = GameObject.Find("DropZone");
+        EnemyDropZone = GameObject.Find("EnemyDropZone");
 
         FindGameManager();
+        FindHealthManager();
     }
 
     [Server]
     public override void OnStartServer()
     {
         FindGameManager();
+        FindHealthManager();
     }
 
     private void FindGameManager()
@@ -49,20 +54,26 @@ public class PlayerManager : NetworkBehaviour
         }
     }
 
+    private void FindHealthManager()
+    {
+        if (healthManager == null)
+        {
+            healthManager = FindObjectOfType<PlayerHealthManager>();
+            if (healthManager == null)
+            {
+                Debug.LogError("PlayerHealthManager is not found in the scene.");
+            }
+        }
+    }
+
     [Command]
     public void CmdDealCards()
     {
-        List<GameObject> cards = new List<GameObject>();
-        cards.Add(Card1Prefab);
-        cards.Add(Card2Prefab);
-        cards.Add(Card3Prefab);
-        cards.Add(Card4Prefab);
-        cards.Add(Card5Prefab);
-        cards.Add(Card6Prefab);
-        cards.Add(Card7Prefab);
-        cards.Add(Card8Prefab);
-        cards.Add(Card9Prefab);
-        cards.Add(Card10Prefab);
+        List<GameObject> cards = new List<GameObject>
+        {
+            Card1Prefab, Card2Prefab, Card3Prefab, Card4Prefab, Card5Prefab,
+            Card6Prefab, Card7Prefab, Card8Prefab, Card9Prefab, Card10Prefab
+        };
 
         for (int i = 0; i < 5; i++)
         {
@@ -138,13 +149,9 @@ public class PlayerManager : NetworkBehaviour
             if (card.name == "Card1(Clone)")
             {
                 Debug.Log("First card in the list");
-                foreach (Transform child in DropZone.transform)
-                {
-                    Destroy(child.gameObject);
-                }
+                DeleteCards(DropZone.transform);
+                DeleteCards(EnemyDropZone.transform);
             }
-
-    
 
             if (card.name == "Card10(Clone)")
             {
@@ -157,8 +164,15 @@ public class PlayerManager : NetworkBehaviour
                 Debug.Log("Card7(Clone) played");
                 CmdRemoveCardFromDropZone("Card5(Clone)");
             }
+            if (card.name == "Card4(Clone)")
+            {
+                
+                DealDamageToEnemy(2);
+                CmdRemoveCardFromDropZone("Card4(Clone)");
+            }
 
-            card.transform.SetParent(DropZone.transform, false);
+            var dropZoneDecided = hasAuthority ? DropZone.transform : EnemyDropZone.transform;
+            card.transform.SetParent(dropZoneDecided, false);
             if (!hasAuthority)
             {
                 card.GetComponent<CardFlipper>().Flip();
@@ -196,14 +210,14 @@ public class PlayerManager : NetworkBehaviour
     {
         Debug.Log("CmdDrawTwoCards called");
 
+        List<GameObject> cards = new List<GameObject>
+        {
+            Card1Prefab, Card2Prefab, Card3Prefab, Card4Prefab, Card5Prefab,
+            Card6Prefab, Card7Prefab, Card8Prefab, Card9Prefab, Card10Prefab
+        };
+
         for (int i = 0; i < 2; i++)
         {
-            List<GameObject> cards = new List<GameObject>
-            {
-                Card1Prefab, Card2Prefab, Card3Prefab, Card4Prefab, Card5Prefab,
-                Card6Prefab, Card7Prefab, Card8Prefab, Card9Prefab, Card10Prefab
-            };
-
             GameObject cardPrefab = cards[Random.Range(0, cards.Count)];
             GameObject card = Instantiate(cardPrefab, new Vector2(0, 0), Quaternion.identity);
             NetworkServer.Spawn(card, connectionToClient);
@@ -264,4 +278,29 @@ public class PlayerManager : NetworkBehaviour
         card.GetComponent<IncrementClick>().NumberOfClicks++;
         Debug.Log("This card has been clicked " + card.GetComponent<IncrementClick>().NumberOfClicks + " times!");
     }
+
+    void DeleteCards(Transform zone)
+    {
+        foreach (Transform child in zone)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+    public void DealDamageToPlayer(int damage)
+    {
+        if (isServer)
+        {
+            healthManager.DealDamageToPlayer(damage);
+        }
+    }
+
+    public void DealDamageToEnemy(int damage)
+    {
+        if (isServer)
+        {
+            healthManager.DealDamageToEnemy(damage);
+        }
+    }
+
+  
 }
