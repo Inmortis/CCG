@@ -23,6 +23,10 @@ public class PlayerManager : NetworkBehaviour
     private GameManager gameManager;
     private PlayerHealthManager healthManager;
 
+    // Список для хранения карт в руке игрока
+    private List<GameObject> playerHand = new List<GameObject>();
+    private const int maxCardsInHand = 9;
+
     public override void OnStartClient()
     {
         base.OnStartClient();
@@ -69,6 +73,12 @@ public class PlayerManager : NetworkBehaviour
     [Command]
     public void CmdDealCards()
     {
+        if (playerHand.Count >= maxCardsInHand)
+        {
+            Debug.Log("Cannot draw more cards. Hand limit reached.");
+            return;
+        }
+
         List<GameObject> cards = new List<GameObject>
         {
             Card1Prefab, Card2Prefab, Card3Prefab, Card4Prefab, Card5Prefab,
@@ -77,10 +87,18 @@ public class PlayerManager : NetworkBehaviour
 
         for (int i = 0; i < 5; i++)
         {
+            if (playerHand.Count >= maxCardsInHand)
+            {
+                Debug.Log("Cannot draw more cards. Hand limit reached.");
+                break;
+            }
+
             GameObject cardPrefab = cards[Random.Range(0, cards.Count)];
             GameObject card = Instantiate(cardPrefab, new Vector2(0, 0), Quaternion.identity);
             NetworkServer.Spawn(card, connectionToClient);
             RpcShowCard(card, "Dealt");
+
+            playerHand.Add(card);
         }
     }
 
@@ -98,6 +116,8 @@ public class PlayerManager : NetworkBehaviour
         {
             UpdateTurnsPlayed();
         }
+
+        playerHand.Remove(card);
     }
 
     [Server]
@@ -164,12 +184,6 @@ public class PlayerManager : NetworkBehaviour
                 Debug.Log("Card7(Clone) played");
                 CmdRemoveCardFromDropZone("Card5(Clone)");
             }
-            if (card.name == "Card4(Clone)")
-            {
-                
-                DealDamageToEnemy(2);
-                CmdRemoveCardFromDropZone("Card4(Clone)");
-            }
 
             var dropZoneDecided = hasAuthority ? DropZone.transform : EnemyDropZone.transform;
             card.transform.SetParent(dropZoneDecided, false);
@@ -210,18 +224,26 @@ public class PlayerManager : NetworkBehaviour
     {
         Debug.Log("CmdDrawTwoCards called");
 
-        List<GameObject> cards = new List<GameObject>
-        {
-            Card1Prefab, Card2Prefab, Card3Prefab, Card4Prefab, Card5Prefab,
-            Card6Prefab, Card7Prefab, Card8Prefab, Card9Prefab, Card10Prefab
-        };
-
         for (int i = 0; i < 2; i++)
         {
+            if (playerHand.Count >= maxCardsInHand)
+            {
+                Debug.Log("Cannot draw more cards. Hand limit reached.");
+                break;
+            }
+
+            List<GameObject> cards = new List<GameObject>
+            {
+                Card1Prefab, Card2Prefab, Card3Prefab, Card4Prefab, Card5Prefab,
+                Card6Prefab, Card7Prefab, Card8Prefab, Card9Prefab, Card10Prefab
+            };
+
             GameObject cardPrefab = cards[Random.Range(0, cards.Count)];
             GameObject card = Instantiate(cardPrefab, new Vector2(0, 0), Quaternion.identity);
             NetworkServer.Spawn(card, connectionToClient);
             RpcShowCard(card, "Dealt");
+
+            playerHand.Add(card);
         }
     }
 
@@ -282,25 +304,6 @@ public class PlayerManager : NetworkBehaviour
     void DeleteCards(Transform zone)
     {
         foreach (Transform child in zone)
-        {
             Destroy(child.gameObject);
-        }
     }
-    public void DealDamageToPlayer(int damage)
-    {
-        if (isServer)
-        {
-            healthManager.DealDamageToPlayer(damage);
-        }
-    }
-
-    public void DealDamageToEnemy(int damage)
-    {
-        if (isServer)
-        {
-            healthManager.DealDamageToEnemy(damage);
-        }
-    }
-
-  
 }
