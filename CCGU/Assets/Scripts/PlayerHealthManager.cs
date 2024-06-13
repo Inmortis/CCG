@@ -36,6 +36,18 @@ public class PlayerHealthManager : NetworkBehaviour
             enemyHealth = 0;
     }
 
+    [Server]
+    public void HealPlayer(int amount)
+    {
+        playerHealth += amount;
+    }
+
+    [Server]
+    public void HealEnemy(int amount)
+    {
+        enemyHealth += amount;
+    }
+
     private void OnPlayerHealthChanged(int oldHealth, int newHealth)
     {
         UpdateHealthText();

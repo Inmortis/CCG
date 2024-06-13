@@ -23,7 +23,6 @@ public class PlayerManager : NetworkBehaviour
     private GameManager gameManager;
     private PlayerHealthManager healthManager;
 
-    // Список для хранения карт в руке игрока
     private List<GameObject> playerHand = new List<GameObject>();
     private const int maxCardsInHand = 9;
 
@@ -98,7 +97,7 @@ public class PlayerManager : NetworkBehaviour
             NetworkServer.Spawn(card, connectionToClient);
             RpcShowCard(card, "Dealt");
 
-            playerHand.Add(card);
+            playerHand.Add(card); // Исправлено с add на Add
         }
     }
 
@@ -118,6 +117,11 @@ public class PlayerManager : NetworkBehaviour
         }
 
         playerHand.Remove(card);
+
+        if (card.name == "Card2(Clone)")
+        {
+            RpcHandleCard2Played(netIdentity, card);
+        }
     }
 
     [Server]
@@ -147,11 +151,8 @@ public class PlayerManager : NetworkBehaviour
     [ClientRpc]
     void RpcShowCard(GameObject card, string type)
     {
-        Debug.Log("RpcShowCard called with card: " + card.name + ", type: " + type);
-
         if (type == "Dealt")
         {
-            Debug.Log("Dealt type");
             if (hasAuthority)
             {
                 card.transform.SetParent(PlayerArea.transform, false);
@@ -164,24 +165,19 @@ public class PlayerManager : NetworkBehaviour
         }
         else if (type == "Played")
         {
-            Debug.Log("Played type");
-
             if (card.name == "Card1(Clone)")
             {
-                Debug.Log("First card in the list");
                 DeleteCards(DropZone.transform);
                 DeleteCards(EnemyDropZone.transform);
             }
 
             if (card.name == "Card10(Clone)")
             {
-                Debug.Log("Card10(Clone) played");
                 CmdDrawTwoCards();
             }
 
             if (card.name == "Card7(Clone)")
             {
-                Debug.Log("Card7(Clone) played");
                 CmdRemoveCardFromDropZone("Card5(Clone)");
             }
 
@@ -197,13 +193,10 @@ public class PlayerManager : NetworkBehaviour
     [Command]
     void CmdCreateCardClones(GameObject originalCard)
     {
-        Debug.Log("CmdCreateCardClones called");
-
         for (int i = 0; i < 3; i++)
         {
             GameObject cardClone = Instantiate(originalCard);
             NetworkServer.Spawn(cardClone);
-            Debug.Log("Clone created and spawned: " + cardClone.name);
             RpcAddCardToDropZone(cardClone);
         }
     }
@@ -211,7 +204,6 @@ public class PlayerManager : NetworkBehaviour
     [ClientRpc]
     void RpcAddCardToDropZone(GameObject card)
     {
-        Debug.Log("RpcAddCardToDropZone called with card: " + card.name);
         card.transform.SetParent(DropZone.transform, false);
         if (!hasAuthority)
         {
@@ -222,13 +214,10 @@ public class PlayerManager : NetworkBehaviour
     [Command]
     void CmdDrawTwoCards()
     {
-        Debug.Log("CmdDrawTwoCards called");
-
         for (int i = 0; i < 2; i++)
         {
             if (playerHand.Count >= maxCardsInHand)
             {
-                Debug.Log("Cannot draw more cards. Hand limit reached.");
                 break;
             }
 
@@ -243,20 +232,17 @@ public class PlayerManager : NetworkBehaviour
             NetworkServer.Spawn(card, connectionToClient);
             RpcShowCard(card, "Dealt");
 
-            playerHand.Add(card);
+            playerHand.Add(card); // Исправлено с add на Add
         }
     }
 
     [Command]
     void CmdRemoveCardFromDropZone(string cardName)
     {
-        Debug.Log("CmdRemoveCardFromDropZone called for card: " + cardName);
-
         foreach (Transform child in DropZone.transform)
         {
             if (child.gameObject.name == cardName)
             {
-                Debug.Log("Card found and removed: " + cardName);
                 NetworkServer.Destroy(child.gameObject);
                 break;
             }
@@ -298,12 +284,24 @@ public class PlayerManager : NetworkBehaviour
     void RpcIncrementClick(GameObject card)
     {
         card.GetComponent<IncrementClick>().NumberOfClicks++;
-        Debug.Log("This card has been clicked " + card.GetComponent<IncrementClick>().NumberOfClicks + " times!");
     }
 
     void DeleteCards(Transform zone)
     {
         foreach (Transform child in zone)
             Destroy(child.gameObject);
+    }
+
+    [ClientRpc]
+    void RpcHandleCard2Played(NetworkIdentity playerIdentity, GameObject card)
+    {
+        if (playerIdentity.isLocalPlayer)
+        {
+            healthManager.HealPlayer(2);
+        }
+        else
+        {
+            healthManager.HealEnemy(2);
+        }
     }
 }
