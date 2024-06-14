@@ -36,14 +36,34 @@ public class PlayerHealthManager : NetworkBehaviour
             enemyHealth = 0;
     }
 
+    [Server]
+    public void HealPlayer(int amount, NetworkConnection targetConnection)
+    {
+        playerHealth += amount;
+        TargetUpdateHealth(targetConnection, true, playerHealth);
+    }
+
+    [Server]
+    public void HealEnemy(int amount, NetworkConnection targetConnection)
+    {
+        enemyHealth += amount;
+        TargetUpdateHealth(targetConnection, false, enemyHealth);
+    }
+
     private void OnPlayerHealthChanged(int oldHealth, int newHealth)
     {
-        UpdateHealthText();
+        if (isLocalPlayer)
+        {
+            UpdateHealthText();
+        }
     }
 
     private void OnEnemyHealthChanged(int oldHealth, int newHealth)
     {
-        UpdateHealthText();
+        if (!isLocalPlayer)
+        {
+            UpdateHealthText();
+        }
     }
 
     private void UpdateHealthText()
@@ -57,5 +77,19 @@ public class PlayerHealthManager : NetworkBehaviour
         {
             EnemyHealthText.text = "Enemy Health: " + enemyHealth;
         }
+    }
+
+    [TargetRpc]
+    void TargetUpdateHealth(NetworkConnection target, bool isPlayer, int newHealth)
+    {
+        if (isPlayer)
+        {
+            playerHealth = newHealth;
+        }
+        else
+        {
+            enemyHealth = newHealth;
+        }
+        UpdateHealthText();
     }
 }
