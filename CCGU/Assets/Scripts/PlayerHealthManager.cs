@@ -6,31 +6,63 @@ using Mirror;
 
 public class PlayerHealthManager : NetworkBehaviour
 {
-    public Text PlayerHealthText;
-    public Text EnemyHealthText;
+    // Здоровье игрока и противника
+    [SyncVar] public int playerHealth = 20;
+    [SyncVar] public int enemyHealth = 20;
 
-    [SyncVar(hook = nameof(OnPlayerHealthChanged))]
-    private int playerHealth = 10;
+    // Тексты для отображения здоровья
+    public Text playerHealthText;
+    public Text enemyHealthText;
 
-    [SyncVar(hook = nameof(OnEnemyHealthChanged))]
-    private int enemyHealth = 10;
-
-    private void Start()
+    // Инициализация клиента
+    public override void OnStartClient()
     {
-        UpdateHealthText();
+        base.OnStartClient();
+        UpdateHealthUI();
     }
 
-    [Server]
-    public void DealDamageToPlayer(int damage)
+    // Инициализация сервера
+    public override void OnStartServer()
     {
-        playerHealth -= damage;
-        if (playerHealth < 0)
-            playerHealth = 0;
+        base.OnStartServer();
+        UpdateHealthUI();
     }
 
-    [Server]
-    public void DealDamageToEnemy(int damage)
+    // Метод для обновления UI здоровья
+    [ClientRpc]
+    public void RpcUpdateHealthUI()
     {
+        playerHealthText.text = "Player Health: " + playerHealth;
+        enemyHealthText.text = "Enemy Health: " + enemyHealth;
+    }
+
+    // Метод для обновления UI здоровья (локальный)
+    private void UpdateHealthUI()
+    {
+        playerHealthText.text = "Player Health: " + playerHealth;
+        enemyHealthText.text = "Enemy Health: " + enemyHealth;
+    }
+
+    // Метод для лечения игрока
+    [Server]
+    public void HealPlayer(int amount, NetworkConnection conn)
+    {
+        if (conn.identity.GetComponent<PlayerManager>().hasAuthority)
+        {
+            playerHealth += amount;
+        }
+        else
+        {
+            enemyHealth += amount;
+        }
+        RpcUpdateHealthUI();
+    }
+
+    // Метод для лечения противника
+    [Server]
+    public void HealEnemy(int amount, NetworkConnection conn)
+    {
+<<<<<<< Updated upstream
         enemyHealth -= damage;
         if (enemyHealth < 0)
             enemyHealth = 0;
@@ -61,13 +93,46 @@ public class PlayerHealthManager : NetworkBehaviour
     private void UpdateHealthText()
     {
         if (PlayerHealthText != null)
+=======
+        if (conn.identity.GetComponent<PlayerManager>().hasAuthority)
+>>>>>>> Stashed changes
         {
-            PlayerHealthText.text = "Player Health: " + playerHealth;
+            enemyHealth += amount;
         }
+        else
+        {
+            playerHealth += amount;
+        }
+        RpcUpdateHealthUI();
+    }
 
-        if (EnemyHealthText != null)
+    // Метод для нанесения урона игроку
+    [Server]
+    public void DamagePlayer(int amount, NetworkConnection conn)
+    {
+        if (conn.identity.GetComponent<PlayerManager>().hasAuthority)
         {
-            EnemyHealthText.text = "Enemy Health: " + enemyHealth;
+            playerHealth -= amount;
         }
+        else
+        {
+            enemyHealth -= amount;
+        }
+        RpcUpdateHealthUI();
+    }
+
+    // Метод для нанесения урона противнику
+    [Server]
+    public void DamageEnemy(int amount, NetworkConnection conn)
+    {
+        if (conn.identity.GetComponent<PlayerManager>().hasAuthority)
+        {
+            enemyHealth -= amount;
+        }
+        else
+        {
+            playerHealth -= amount;
+        }
+        RpcUpdateHealthUI();
     }
 }

@@ -5,6 +5,7 @@ using Mirror;
 
 public class PlayerManager : NetworkBehaviour
 {
+    // Карты и зоны на игровом поле
     public GameObject Card1Prefab;
     public GameObject Card2Prefab;
     public GameObject Card3Prefab;
@@ -23,9 +24,14 @@ public class PlayerManager : NetworkBehaviour
     private GameManager gameManager;
     private PlayerHealthManager healthManager;
 
+<<<<<<< Updated upstream
+=======
+    // Список карт в руке игрока и максимальное количество карт
+>>>>>>> Stashed changes
     private List<GameObject> playerHand = new List<GameObject>();
     private const int maxCardsInHand = 9;
 
+    // Инициализация клиента
     public override void OnStartClient()
     {
         base.OnStartClient();
@@ -38,13 +44,15 @@ public class PlayerManager : NetworkBehaviour
         FindHealthManager();
     }
 
-    [Server]
+    // Инициализация сервера
     public override void OnStartServer()
     {
+        base.OnStartServer();
         FindGameManager();
         FindHealthManager();
     }
 
+    // Поиск GameManager в сцене
     private void FindGameManager()
     {
         if (gameManager == null)
@@ -57,6 +65,7 @@ public class PlayerManager : NetworkBehaviour
         }
     }
 
+    // Поиск PlayerHealthManager в сцене
     private void FindHealthManager()
     {
         if (healthManager == null)
@@ -69,6 +78,7 @@ public class PlayerManager : NetworkBehaviour
         }
     }
 
+    // Команда для раздачи карт
     [Command]
     public void CmdDealCards()
     {
@@ -101,15 +111,27 @@ public class PlayerManager : NetworkBehaviour
         }
     }
 
+    // Воспроизведение карты
     public void PlayCard(GameObject card)
     {
         CmdPlayCard(card);
     }
 
+    // Команда для воспроизведения карты
     [Command]
-    void CmdPlayCard(GameObject card)
+    public void CmdPlayCard(GameObject card)
     {
         RpcShowCard(card, "Played");
+
+        // Если карта - Card2, увеличиваем здоровье
+        if (card.name == "Card2(Clone)")
+        {
+            if (isServer)
+            {
+                NetworkConnection targetConnection = connectionToClient;
+                healthManager.HealPlayer(2, targetConnection);
+            }
+        }
 
         if (isServer)
         {
@@ -124,8 +146,9 @@ public class PlayerManager : NetworkBehaviour
         }
     }
 
+    // Обновление количества ходов
     [Server]
-    void UpdateTurnsPlayed()
+    private void UpdateTurnsPlayed()
     {
         if (gameManager == null)
         {
@@ -142,14 +165,16 @@ public class PlayerManager : NetworkBehaviour
         RpcLogToClients("Turns Played: " + gameManager.TurnsPlayed);
     }
 
+    // Логирование для клиентов
     [ClientRpc]
-    void RpcLogToClients(string message)
+    private void RpcLogToClients(string message)
     {
         Debug.Log(message);
     }
 
+    // Отображение карты на клиенте
     [ClientRpc]
-    void RpcShowCard(GameObject card, string type)
+    private void RpcShowCard(GameObject card, string type)
     {
         if (type == "Dealt")
         {
@@ -187,10 +212,25 @@ public class PlayerManager : NetworkBehaviour
             {
                 card.GetComponent<CardFlipper>().Flip();
             }
+
+            // Логика для карты Card2
+            if (card.name == "Card2(Clone)")
+            {
+                if (hasAuthority)
+                {
+                    healthManager.HealPlayer(2, NetworkClient.connection);
+                }
+                else
+                {
+                    healthManager.HealEnemy(2, NetworkClient.connection);
+                }
+            }
         }
     }
 
+    // Команда для добора двух карт
     [Command]
+<<<<<<< Updated upstream
     void CmdCreateCardClones(GameObject originalCard)
     {
         for (int i = 0; i < 3; i++)
@@ -213,6 +253,9 @@ public class PlayerManager : NetworkBehaviour
 
     [Command]
     void CmdDrawTwoCards()
+=======
+    private void CmdDrawTwoCards()
+>>>>>>> Stashed changes
     {
         for (int i = 0; i < 2; i++)
         {
@@ -236,8 +279,9 @@ public class PlayerManager : NetworkBehaviour
         }
     }
 
+    // Команда для удаления карты из DropZone
     [Command]
-    void CmdRemoveCardFromDropZone(string cardName)
+    private void CmdRemoveCardFromDropZone(string cardName)
     {
         foreach (Transform child in DropZone.transform)
         {
@@ -249,12 +293,14 @@ public class PlayerManager : NetworkBehaviour
         }
     }
 
+    // Команда для таргетирования своей карты
     [Command]
     public void CmdTargetSelfCard()
     {
         TargetSelfCard();
     }
 
+    // Команда для таргетирования карты противника
     [Command]
     public void CmdTargetOtherCard(GameObject target)
     {
@@ -262,31 +308,36 @@ public class PlayerManager : NetworkBehaviour
         TargetOtherCard(opponentIdentity.connectionToClient);
     }
 
+    // TargetRpc для таргетирования своей карты
     [TargetRpc]
-    void TargetSelfCard()
+    private void TargetSelfCard()
     {
         Debug.Log("Targeted by self!");
     }
 
+    // TargetRpc для таргетирования карты противника
     [TargetRpc]
-    void TargetOtherCard(NetworkConnection target)
+    private void TargetOtherCard(NetworkConnection target)
     {
         Debug.Log("Targeted by other!");
     }
 
+    // Команда для инкремента кликов
     [Command]
     public void CmdIncrementClick(GameObject card)
     {
         RpcIncrementClick(card);
     }
 
+    // ClientRpc для инкремента кликов
     [ClientRpc]
-    void RpcIncrementClick(GameObject card)
+    private void RpcIncrementClick(GameObject card)
     {
         card.GetComponent<IncrementClick>().NumberOfClicks++;
     }
 
-    void DeleteCards(Transform zone)
+    // Удаление карт из зоны
+    private void DeleteCards(Transform zone)
     {
         foreach (Transform child in zone)
             Destroy(child.gameObject);
