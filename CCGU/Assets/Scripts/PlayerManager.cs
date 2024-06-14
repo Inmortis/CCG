@@ -113,11 +113,9 @@ public class PlayerManager : NetworkBehaviour
 
         if (card.name == "Card2(Clone)")
         {
-            if (isServer)
-            {
-                NetworkConnection targetConnection = connectionToClient;
-                healthManager.HealPlayer(2, targetConnection);
-            }
+            NetworkConnection targetConnection = connectionToClient;
+            healthManager.HealPlayer(2, targetConnection);
+            RpcHealEnemy(2);
         }
 
         if (isServer)
@@ -199,18 +197,15 @@ public class PlayerManager : NetworkBehaviour
             {
                 card.GetComponent<CardFlipper>().Flip();
             }
+        }
+    }
 
-            if (card.name == "Card2(Clone)")
-            {
-                if (hasAuthority)
-                {
-                    healthManager.HealPlayer(2, NetworkClient.connection);
-                }
-                else
-                {
-                    healthManager.HealEnemy(2, NetworkClient.connection);
-                }
-            }
+    [ClientRpc]
+    private void RpcHealEnemy(int amount)
+    {
+        if (!hasAuthority)
+        {
+            healthManager.HealEnemy(amount, NetworkClient.connection);
         }
     }
 
@@ -296,9 +291,11 @@ public class PlayerManager : NetworkBehaviour
         Debug.Log("This card has been clicked " + card.GetComponent<IncrementClick>().NumberOfClicks + " times!");
     }
 
-    private void DeleteCards(Transform zone)
+    private void DeleteCards(Transform parentTransform)
     {
-        foreach (Transform child in zone)
+        foreach (Transform child in parentTransform)
+        {
             Destroy(child.gameObject);
+        }
     }
 }
